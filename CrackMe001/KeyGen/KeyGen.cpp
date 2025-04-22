@@ -10,7 +10,7 @@ int main()
 	int len = strlen(Passwd);
 	int poffset = 0; /*r9*/
 
-	cout << "½âÃÜÇ°ÃÜÂë: " << Passwd << endl;
+	cout << "è§£å¯†å‰å¯†ç : " << Passwd << endl;
 	
 	for (int i=0 /*edx*/; i<len; i++)
 	{
@@ -27,7 +27,7 @@ int main()
 		poffset++;
 	}
 	
-	cout << "½âÃÜºóÃÜÂë: " << ans << endl;
+	cout << "è§£å¯†åŽå¯†ç : " << ans << endl;
 
 	return 0;
 }
