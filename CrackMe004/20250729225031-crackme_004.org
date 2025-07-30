@@ -1,0 +1,23 @@
+:PROPERTIES:
+:ID:       9cf7cd59-6a67-4d05-9d16-9444104d9bc2
+:END:
+#+title: CrackMe-004
+
+* 程序信息
+- 名称 :: C++ and assembly login crackme (no virtualization and no anti debugging)
+- 作者 :: melon
+- 语言 :: C/C++
+- 平台 :: Windows
+- 难度 :: 1.6
+- 品质 :: 3.3
+- 位元 :: x86-64
+- 描述 :: Simple login with username and password no antidebugging
+- 网址 :: [[https://crackmes.one/crackme/687b16b9aadb6eeafb3993f8]]
+
+* 破解过程
+把程序放到x64dbg里面，运行到模块为"crackme.exe"时，按下右健 搜索->当前模块->字符串
+搜索出来的"adminP@ssw0rd"就是用户名称，"P@ssw0rd"就是用户密码。
+
+* 程序分析
+现让用户输入Username和Password，之后在把两个输入的值放进比较函数去做比较，最后在一照反回的结果判断用户输入是否正确。
+
