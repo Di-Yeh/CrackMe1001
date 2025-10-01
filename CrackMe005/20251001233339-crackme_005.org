@@ -1,0 +1,19 @@
+:PROPERTIES:
+:ID:       4b6d051e-7c14-4962-8803-f36485ad51de
+:END:
+#+title: crackme_005
+
+* 程序信息
+- 名称 :: First C program
+- 作者 :: atherusti
+- 语言 :: C/C++
+- 平台 :: Windows
+- 难度 :: 2.0
+- 品质 :: 4.0
+- 位元 :: x86-64
+- 描述 :: never coded before making this crackme, get the password
+- 网址 :: [[https://crackmes.one/crackme/68c96889224c0ec5dcedc063]]
+
+* 破解过程
+在用户输入完密码后逐步去验证密码是否正确，只要在比较的时候查看比较的寄存器里面的值就可以知道答案了
+答案：banana
