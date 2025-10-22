@@ -1,0 +1,114 @@
+:PROPERTIES:
+:ID:       6a7ba917-7b62-49be-8bb4-329e014d0c3d
+:END:
+#+title: crackme_006
+
+* 程序信息
+- 名称 :: Patch protect lite
+- 作者 :: genass3
+- 语言 :: C/C++
+- 平台 :: Windows
+- 难度 :: 3.5
+- 品质 :: 4.5
+- 位元 :: x86-64
+- 描述 :: The diff between other versions:
+  - Rewrited pass verification algorithm (removed the hash algorithm)
+  - Improved string encryption
+  - Rewrited some obfuscation things (make it easier)
+  - Your main goal is to find the password, for every user password will be different.
+- 网址 :: [[https://crackmes.one/crackme/68d8731a224c0ec5dcedc3be]]
+
+* 破解过程
+key生成部分主要是获取cpuid经过一些算法后得到的值加上0x5E1，以下是算法部分
+
+#+BEGIN_SRC C
+cpuid		; 从这里开始获取CPUID
+mov     dword ptr [rsp+2D0h+modinfo.lpBaseOfDll+4], ebx
+mov     ebx, eax
+mov     [rsp+2D0h+modinfo.SizeOfImage], ecx
+mov     ecx, eax
+mov     dword ptr [rsp+2D0h+modinfo.EntryPoint], edx
+mov     edx, eax
+sar     ebx, 4
+sar     ecx, 8
+and     ebx, 0Fh
+sar     edx, 10h
+and     ecx, 0Fh
+and     edx, 0Fh
+cmp     ecx, 0Fh
+jnz     short loc_13FA918A1
+
+sar     eax, 14h
+movzx   eax, al
+add     ecx, eax
+
+loc_13FA918A1:
+cmp     ecx, 6
+jz      short loc_13FA918AB
+
+cmp     ecx, 0Fh
+jnz     short loc_13FA918B0
+
+loc_13FA918AB:
+shl     edx, 4
+add     ebx, edx
+
+loc_13FA918B0:
+movzx   r8d, [rbp+1D0h+Buf]
+mov     edx, ecx
+mov     eax, ecx
+shl     rax, 20h
+mov     ecx, ebx
+xor     ebx, ebx
+or      rax, rcx
+lea     r10d, [rdx+rax]
+lea     r9d, [rdx+rax]
+xor     edx, edx
+test    r8b, r8b
+jz      short loc_13FA918FC ; 判断rb8是否有值没值就跳转
+
+lea     rax, [rbp+1D0h+Buf]
+nop     dword ptr [rax]
+
+loc_13FA918E0:
+movsx   ecx, r8b
+lea     rax, [rax+1]
+xor     ecx, edx
+inc     edx
+xor     ecx, r9d
+add     ebx, ecx
+movzx   ecx, byte ptr [rax]
+movzx   r8d, cl
+test    cl, cl
+jnz     short loc_13FA918E0
+
+loc_13FA918FC:
+lea     eax, [r10+5E1h]
+cmp     ebx, eax        ; eax = 0x69E 这里以eax为0x69E为例
+jz      short loc_13FA91946
+#+END_SRC
+
+ebx为比较值，如果ebx和eax一样就代表输入的key是正确的，一下使用lisp编写的生成器 输入"123456789I"即可获得正确答案
+
+#+BEGIN_SRC lisp
+  (defparameter eax #x69E)
+  (defparameter rd9 #xBD)
+
+  (defun test(str)
+  	(let ((len (length str))
+  				(ebx 0)
+  				(edx 0)
+  				(ecx 0))
+  		(loop for i from 0 to (- len 1)
+  					do (setf ecx (char-code (char str i)))
+  					do (setf ecx (logxor ecx edx))
+  					do (setf edx (1+ edx))
+  					do (setf ecx (logxor ecx rd9))
+  					do (setf ebx (+ ebx ecx)))
+  		(progn
+  			(setf ecx #xA)
+  			(setf ecx (logxor ecx edx))
+  			(setf ecx (logxor ecx rd9))
+  			(setf ebx (+ ebx ecx))
+  			(format t "~X~%" ebx))))
+#+END_SRC
